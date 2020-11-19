@@ -1,39 +1,106 @@
+let buffer = "0";
+let runningTotal = 0;
+let previousOperator;
+const screen = document.querySelector(".input-output");
 
-let calculator = {
-    output: document.querySelector('.input-output'),
-    firstOperand: null,
-    waitingForSecondOperand: false,
-    operator: null
+function calculateResult (firstOperand, operator, secondOperand) {
+    if (operator === '+') {
+        return firstOperand + secondOperand;
+      } else if (operator === '-') {
+        return firstOperand - secondOperand;
+      } else if (operator === '*') {
+        return firstOperand * secondOperand;
+      } else if (operator === '/') {
+        return firstOperand / secondOperand;
+      }
+    
+    return secondOperand;
 }
 
-let step = '';
-
 document.querySelector('.rows').addEventListener('click', function(event) {
-    input = event.target.innerText;
-    calculator.output.innerText += input;
+    buttonClick(event.target.innerText)}
+)
 
-    if(!isNaN(input)){ // ako je broj
-        console.log(input + " is a number!");
-        calculator.firstOperand = calculator.output.innerText;
-        console.log("First operand is: " + calculator.firstOperand)
+function buttonClick(value) {
+    //check if the value is a number or not
+    if(isNaN(parseInt(value))) {
+        handleOperator(value);
+    } else {
+        handleNumber(value)
     }
-    //ako je upisan broj i upisujemo funkcionalnost
-    else if (false) {
-        console.log("Pressed the functionality!")
-        calculator.waitingForSecondOperand = True;
-        calculator.operator = input;
+    rerender();
+}
+
+function handleNumber(value) {
+    if(buffer === "0") {
+        buffer = value;
+    } else {
+        buffer += value;
     }
-    else if(input === "C") { // ako nije broj
-        input = '';
-        calculator.output.innerText = input;
-        console.log("Input: " + input);
-        console.log("Output: " + calculator.output.innerText);
-    } else if(input === "D") {
-        let newOutput = calculator.output.innerText;
-        // -2 jer se s -1 izbriše D, a nama triba nestat zadnji znak
-        calculator.output.innerText = newOutput.slice(0, -2);
+}
+
+function handleMath(value) {
+    if (buffer === "0") {
+      // do nothing
+      return;
     }
-    
-    //console.log(output.innerText);
-    //alert(`You clicked on button ${event.target.innerText}`);
-  });
+  
+    const intBuffer = parseInt(buffer);
+    if (runningTotal === 0) {
+      runningTotal = intBuffer;
+    } else {
+      flushOperation(intBuffer);
+    }
+  
+    previousOperator = value;
+  
+    buffer = "0";
+  }
+
+  function flushOperation(intBuffer) {
+    if (previousOperator === "+") {
+      runningTotal += intBuffer;
+    } else if (previousOperator === "-") {
+      runningTotal -= intBuffer;
+    } else if (previousOperator === "×") {
+      runningTotal *= intBuffer;
+    } else {
+      runningTotal /= intBuffer;
+    }
+  }
+
+  function handleOperator(value) {
+    switch (value) {
+      case "C":
+        buffer = "0";
+        runningTotal = 0;
+        break;
+      case "=":
+        if (previousOperator === null) {
+          // need two numbers to do math
+          return;
+        }
+        flushOperation(parseInt(buffer));
+        previousOperator = null;
+        buffer = +runningTotal;
+        runningTotal = 0;
+        break;
+      case "D":
+        if (buffer.length === 1) {
+          buffer = "0";
+        } else {
+          buffer = buffer.substring(0, buffer.length - 1);
+        }
+        break;
+      case "+":
+      case "-":
+      case "*":
+      case "/":
+        handleMath(value);
+        break;
+    }
+  }
+  
+  function rerender() {
+    screen.innerText = buffer;
+  }
