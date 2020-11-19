@@ -8,3 +8,6 @@ The requirements:
     Doing the back arrow is extra credit. It's like pressing backspace; it'll delete the last character typed. If it's clicked when there's only one digit, it sets the current number to be 0.
     Don't worry about if the number is too long for the screen.
     Calculators tend to have some special behavior when you hit equals: if you type another number it erases the results and starts over. Feel free to do that but also free free (like me) to just treat it normally and make the user hit C if they want to clear it. Let's keep it simple.
+
+LINKS:
+https://btholt.github.io/intro-to-web-dev-v2/
